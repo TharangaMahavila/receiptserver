@@ -10,7 +10,7 @@ COPY . .
 RUN chmod +x ./gradlew
 
 # Build jar
-RUN ./gradlew clean build --no-daemon
+RUN ./gradlew clean bootJar --no-daemon
 
 # Runtime image
 FROM eclipse-temurin:21-jre
