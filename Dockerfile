@@ -6,8 +6,11 @@ WORKDIR /app
 # Copy project files
 COPY . .
 
+# Make wrapper executable
+RUN chmod +x ./gradlew
+
 # Build jar
-RUN gradle clean build --no-daemon
+RUN ./gradlew clean build --no-daemon
 
 # Runtime image
 FROM eclipse-temurin:21-jre
