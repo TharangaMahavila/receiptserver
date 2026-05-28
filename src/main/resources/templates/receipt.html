@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Receipt</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <style>
+
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .receipt {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .item {
+            margin-bottom: 15px;
+        }
+
+        .total {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="receipt">
+
+    <h1>ORDER RECEIPT</h1>
+
+    <div th:if="${order != null}">
+        <p>
+            <b>Order Number:</b>
+            <span th:text="${order.orderNumber}"></span>
+        </p>
+
+        <p>
+            <b>Type:</b>
+            <span th:text="${order.orderType}"></span>
+        </p>
+
+        <p>
+            <b>Status:</b>
+            <span th:text="${order.status}"></span>
+        </p>
+
+        <hr>
+
+        <div
+                class="item"
+                th:each="item : ${order.items}"
+        >
+
+            <div>
+                <b th:text="${item.quantity}"></b>x
+                <span th:text="${item.itemName}"></span>
+            </div>
+
+            <div>
+                <span th:text="${item.totalPrice}"></span>
+                SEK
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="total">
+
+            Total:
+            <span th:text="${order.totalPrice}"></span>
+            SEK
+
+        </div>
+    </div>
+    <div th:unless="${order != null}">
+        <p>No order details available.</p>
+    </div>
+
+</div>
+
+</body>
+</html>
