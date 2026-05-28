@@ -1,5 +1,5 @@
-# Use Gradle + JDK 21 image
-FROM gradle:8.15-jdk21 AS build
+# Use JDK 21 image
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
