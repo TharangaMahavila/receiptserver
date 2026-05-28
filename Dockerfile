@@ -1,20 +1,21 @@
-# Use official Java runtime
-FROM eclipse-temurin:17-jdk
+# Use Gradle + JDK 21 image
+FROM gradle:8.7-jdk21 AS build
 
-# Set working directory
 WORKDIR /app
 
 # Copy project files
 COPY . .
 
-# Give permission to gradlew
-RUN chmod +x gradlew
+# Build jar
+RUN gradle clean build --no-daemon
 
-# Build the project inside container
-RUN ./gradlew clean build
+# Runtime image
+FROM eclipse-temurin:21-jre
 
-# Expose Spring Boot port
+WORKDIR /app
+
+COPY --from=build /app/build/libs/*.jar app.jar
+
 EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "build/libs/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
