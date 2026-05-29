@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt</title>
 
     <style>
@@ -38,9 +38,9 @@
             text-align: center;
             background: #f1f5f9;
             border: 1px solid #e2e8f0;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             margin-bottom: 24px;
             display: flex;
@@ -139,74 +139,94 @@
             color: #7f1d1d;
             margin: 0;
         }
+
+        /* for mobile */
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .receipt {
+                max-width: 100%;
+                padding: 24px;
+            }
+
+            .status-badge {
+                font-size: 17px; /* Enlarges the status badge text */
+                padding: 14px;
+            }
+
+            .total {
+                font-size: 20px; /* Highlights the total price section */
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- ORDER NOT FOUND -->
-    <div th:if="${order == null}" class="receipt error">
-        <h2>No order details available</h2>
-        <p>Please check your QR code or try again later.</p>
+<!-- ORDER NOT FOUND -->
+<div th:if="${order == null}" class="receipt error">
+    <h2>No order details available</h2>
+    <p>Please check your QR code or try again later.</p>
+</div>
+
+<!-- ORDER FOUND -->
+<div th:if="${order != null}" class="receipt">
+
+    <h1>ORDER RECEIPT</h1>
+
+    <!-- ORDER STATUS TOP BADGE -->
+    <div class="status-badge">
+        <span>Status:</span>
+        <span th:text="${order.status}"></span>
     </div>
 
-    <!-- ORDER FOUND -->
-    <div th:if="${order != null}" class="receipt">
+    <div class="meta">
+        <p><b>Order Number:</b> <span th:text="${order.orderNumber}"></span></p>
+        <p><b>Date:</b>
+            <span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+        </p>
+        <p><b>Type:</b> <span th:text="${order.orderType}"></span></p>
+    </div>
 
-        <h1>ORDER RECEIPT</h1>
+    <hr>
 
-        <!-- ORDER STATUS TOP BADGE -->
-        <div class="status-badge">
-            <span>Status:</span>
-            <span th:text="${order.status}"></span>
+    <!-- ITEMS -->
+    <div th:each="item : ${order.items}" class="item">
+
+        <div class="item-header">
+            <span>
+                <span th:text="${item.quantity}"></span> x
+                <span th:text="${item.itemName}"></span>
+            </span>
+
+            <span th:text="${item.getTotalPrice()} + ' SEK'"></span>
         </div>
 
-        <div class="meta">
-            <p><b>Order Number:</b> <span th:text="${order.orderNumber}"></span></p>
-            <p><b>Date:</b>
-                <span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
-            </p>
-            <p><b>Type:</b> <span th:text="${order.orderType}"></span></p>
-        </div>
-
-        <hr>
-
-        <!-- ITEMS -->
-        <div th:each="item : ${order.items}" class="item">
-
-            <div class="item-header">
-                <span>
-                    <span th:text="${item.quantity}"></span> x
-                    <span th:text="${item.itemName}"></span>
-                </span>
-
-                <span th:text="${item.getTotalPrice()} + ' SEK'"></span>
+        <!-- CUSTOMIZATIONS -->
+        <div th:if="${item.customizations != null}">
+            <div th:each="c : ${item.customizations}" class="custom">
+                <span th:text="${c.type == 'ADDABLE' ? '+' : '-'}"></span>
+                <span th:text="${c.name}"></span>
             </div>
-
-            <!-- CUSTOMIZATIONS -->
-            <div th:if="${item.customizations != null}">
-                <div th:each="c : ${item.customizations}" class="custom">
-                    <span th:text="${c.type == 'ADDABLE' ? '+' : '-'}"></span>
-                    <span th:text="${c.name}"></span>
-                </div>
-            </div>
-
-        </div>
-
-        <hr>
-
-        <!-- TOTAL -->
-        <div class="total">
-            <span>Total</span>
-            <span th:text="${order.totalPrice} + ' SEK'"></span>
-        </div>
-
-        <div class="footer">
-            Thank you! Enjoy your meal.
         </div>
 
     </div>
+
+    <hr>
+
+    <!-- TOTAL -->
+    <div class="total">
+        <span>Total</span>
+        <span th:text="${order.totalPrice} + ' SEK'"></span>
+    </div>
+
+    <div class="footer">
+        Thank you! Enjoy your meal.
+    </div>
+
+</div>
 
 </body>
-
 </html>
